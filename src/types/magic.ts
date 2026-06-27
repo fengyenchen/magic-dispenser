@@ -16,14 +16,16 @@ export interface MagicItem { // 商品屬性
 }
 
 export interface CartItem { // 購物車某項商品屬性
-  product: MagicItem;
+  id: string;
+  userId: string;
+  magicItemId: string;
   quantity: number;
 }
 
 export interface Order { // 訂單屬性
     id: string;
     userId: string;
-    items: CartItem[];
+    cartItems: CartItem[];
     totalPrice: number;
     status: 'brewing' | 'completed' | 'failed';
     createdAt: string;
