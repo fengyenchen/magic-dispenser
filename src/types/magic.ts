@@ -1,4 +1,4 @@
-export interface Role {
+export interface Users { // 使用者屬性
   id: string;
   account: string;
   password: string;
