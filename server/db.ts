@@ -1,8 +1,13 @@
 import { Pool } from '@neondatabase/serverless';
 import dotenv from 'dotenv';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config({ path: path.resolve(process.cwd(), 'server/.env') });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 強制鎖定讀取當前資料夾下的 .env 檔案
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 // 建立連接池實例
 const pool = new Pool({

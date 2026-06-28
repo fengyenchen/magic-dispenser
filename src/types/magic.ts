@@ -1,11 +1,3 @@
-export interface Users { // 使用者屬性
-  id: string;
-  account: string;
-  password: string;
-  username: string;
-  role: 'student' | 'professor';
-}
-
 export interface MagicItem { // 商品屬性
   id: string;
   name: string;

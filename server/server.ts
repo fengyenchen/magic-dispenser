@@ -6,8 +6,12 @@ import path from 'path';
 
 import magicRouter from './routes/magicRoutes';
 import authRouter from './routes/authRoutes';
+import { fileURLToPath } from 'url';
 
-dotenv.config({ path: path.resolve(process.cwd(), 'server/.env') });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
