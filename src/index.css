@@ -6,8 +6,6 @@
 
   --color-primary: #E6D5B8;
   --color-secondary: #6D604A;
-
-  --color-accent: #2EE56B;
   
   --font-serif: "Noto Serif TC", "serif";
   --font-sans: "Noto Sans TC", "sans-serif";
@@ -22,7 +20,7 @@
 }
 
 ::selection {
-  background-color: var(--color-accent);
+  background-color: var(--color-primary);
   color: var(--color-background);
 }
 

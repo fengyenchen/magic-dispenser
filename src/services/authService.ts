@@ -1,6 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 import type { LoginCredentials, AuthResponse, RegisterCredentials } from '../types/auth';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // 取得所有使用者
 export const getUsers = async () => {

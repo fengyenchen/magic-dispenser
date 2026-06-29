@@ -35,13 +35,13 @@ router.post('/register', async (req: Request, res: Response, next: NextFunction)
         }
 
         // 檢查帳號是否已經存在
-        const checkQuery = 'SELECT id FROM users WHERE account = $1';
-        const checkResult = await pool.query(checkQuery, [account]);
+        const check = await pool.query('SELECT id FROM users WHERE account = $1', [account]);
 
-        if (checkResult.rows.length > 0) {
+        if (check.rows.length > 0) {
             return res.status(400).json({ status: 'error', message: '此信箱已被其他使用者註冊' });
         }
 
+        // 加密密碼
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const { rows } = await pool.query(
@@ -73,17 +73,16 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
             return res.status(400).json({ status: 'error', message: '帳號和密碼皆為必填' });
         }
 
-        const userQuery = 'SELECT * FROM users WHERE account = $1';
-        const { rows } = await pool.query(userQuery, [account]);
+        const { rows } = await pool.query('SELECT * FROM users WHERE account = $1', [account]);
 
         if (rows.length === 0) {
             return res.status(401).json({ status: 'error', message: '帳號或密碼錯誤' });
         }
 
-        const dbUser = rows[0];
+        const user = rows[0];
 
         // 比對密碼
-        const isPasswordMatch = await bcrypt.compare(password, dbUser.password);
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
 
         if (!isPasswordMatch) {
             return res.status(401).json({ status: 'error', message: '帳號或密碼錯誤' });
@@ -91,7 +90,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
         // 生成 JWT
         const token = jwt.sign(
-            { id: dbUser.id, role: dbUser.role },
+            { id: user.id, role: user.role },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
@@ -101,10 +100,10 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
             message: '登入成功',
             token,
             user: {
-                id: dbUser.id,
-                account: dbUser.account,
-                username: dbUser.username,
-                role: dbUser.role
+                id: user.id,
+                account: user.account,
+                username: user.username,
+                role: user.role
             }
         });
 
