@@ -7,6 +7,51 @@ const router = Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key_arcana';
 
+
+// GET: 取得目前登入使用者資料
+
+// 擴充 Express Request 型別，讓後面的 authenticate 中間件可以在 req 上用 user 屬性
+interface AuthRequest extends Request {
+    user?: {
+        id: string;
+    };
+}
+
+// 驗證前端 Request Header 帶過來的 Token
+const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader?.startsWith('Bearer ')) {
+        return res.status(401).json({ status: 'error', message: '未提供 Token 或格式錯誤' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, JWT_SECRET, (err, decoded: any) => {
+        if (err) {
+            return res.status(403).json({ status: 'error', message: '憑證無效或已過期' });
+        }
+        req.user = { id: decoded.id };  // 將解密後的使用者 ID 存到 req.user
+        next(); // 放行
+    });
+};
+
+router.get('/me', authenticate, async (req: any, res: Response) => {
+    try {
+        const userId = req.user.id;
+
+        const { rows } = await pool.query(
+            'SELECT id, account, username, role FROM users WHERE id = $1',
+            [userId]
+        );
+
+        res.status(200).json({
+            status: 'success',
+            user: rows[0]
+        });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: '伺服器錯誤' });
+    }
+});
+
 // GET: 取得所有使用者
 router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     try {
@@ -90,7 +135,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
         // 生成 JWT
         const token = jwt.sign(
-            { id: user.id, role: user.role },
+            { id: user.id },
             JWT_SECRET,
             { expiresIn: '24h' }
         );

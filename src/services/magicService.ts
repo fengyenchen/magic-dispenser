@@ -1,6 +1,6 @@
 import type { MagicItem } from '../types/magic';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // 取得所有商品
 export const getMagicItems = async (): Promise<MagicItem[]> => {
@@ -8,9 +8,9 @@ export const getMagicItems = async (): Promise<MagicItem[]> => {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || '無法取得商品');
-    return result.data;
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || '無法取得商品');
+    return data.data;
 };
 
 // 新增商品
@@ -20,9 +20,9 @@ export const createMagicItem = async (item: Omit<MagicItem, 'id'>): Promise<Magi
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || '無法新增商品');
-    return result.data;
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || '無法新增商品');
+    return data;
 };
 
 // 更新商品
@@ -32,9 +32,9 @@ export const updateMagicItem = async (id: string, item: Partial<MagicItem>): Pro
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || '無法更新商品');
-    return result.data;
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || '無法更新商品');
+    return data;
 };
 
 // 刪除商品
@@ -43,6 +43,6 @@ export const deleteMagicItem = async (id: string): Promise<void> => {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || '無法刪除商品');
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || '無法刪除商品');
 }
