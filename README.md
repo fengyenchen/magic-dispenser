@@ -47,6 +47,7 @@
 │   │   └── init.sql        # 資料庫結構
 │   ├── routes/             # 後端 API 路由目錄
 │   │   ├── authRoutes.ts   # 身分驗證與權限路由
+│   │   ├── cartRoutes.ts   # 大釜 (購物車) 物資路由
 │   │   └── magicRoutes.ts  # 魔法物資管理路由
 │   ├── .env                # 後端環境變數設定檔
 │   ├── .env.example        # 後端環境變數範本檔
@@ -71,6 +72,7 @@
 │   │   └── Menu.tsx        # 物資販賣機主介面
 │   ├── services/           # 前端 API 請求服務目錄
 │   │   ├── authService.ts  # 身分驗證 API 請求
+│   │   ├── cartService.ts  # 大釜 (購物車) 物資 API 請求
 │   │   └── magicService.ts # 物資管理 API 請求
 │   ├── types/              # TypeScript 型別定義目錄
 │   │   ├── auth.ts
@@ -172,3 +174,10 @@ npm run dev
 * `POST /api/magic` - 新增全新的魔法物資品項進資料庫中
 * `PUT /api/magic/:id` - 更新指定商品的詳細資訊（包含名稱、價格、描述、庫存與分類）
 * `DELETE /api/magic/:id` - 永久刪除指定的商品品項
+
+### 購物車模組 (`/api/cart`)
+
+* `GET /api/cart/:userId` - 撈取指定巫師大釜 (購物車) 內的所有現存物資清單
+* `POST /api/cart` - 將指定的魔法物資品項投入大釜中 (新增至購物車)
+* `PUT /api/cart/adjust` - 調整大釜內指定物資的數量
+* `DELETE /api/cart/:cartId` - 將指定的魔法物資徹底從大釜中撈出並移除
