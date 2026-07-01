@@ -24,7 +24,7 @@ function AppRoutes() {
   const userRole = auth?.user?.role;
 
   const getFallbackRedirect = () => {
-    if (!isAuthenticated) return "/login";
+    if (!isAuthenticated) return "/";
     return userRole === 'professor' ? "/admin/dashboard" : "/menu";
   };
 
@@ -36,34 +36,34 @@ function AppRoutes() {
         element={<Home />}
       />
 
-      {/* 登入頁：如果已經登入，直接去 /menu，不用重複登入 */}
+      {/* 登入頁：如果已經登入，直接去 /menu 或 /admin/dashboard，不用重複登入 */}
       <Route
         path="/login"
-        element={isAuthenticated ? <Navigate to="/menu" replace /> : <Login />}
+        element={isAuthenticated ? <Navigate to={getFallbackRedirect()} replace /> : <Login />}
       />
 
-      {/* 菜單頁：如果沒登入，強制回 /login */}
+      {/* 菜單頁：如果沒登入，強制回 / */}
       <Route
         path="/menu"
-        element={isAuthenticated ? <Menu /> : <Navigate to="/login" replace />}
+        element={isAuthenticated ? <Menu /> : <Navigate to="/" replace />}
       />
 
-      {/* 釀造頁：如果沒登入，一樣強制回 /login */}
+      {/* 釀造頁：如果沒登入，一樣強制回 / */}
       <Route
         path="/brewing/:orderId"
-        element={isAuthenticated ? <Brewing /> : <Navigate to="/login" replace />}
+        element={isAuthenticated ? <Brewing /> : <Navigate to="/" replace />}
       />
 
-      {/* 管理員儀表板：如果沒登入，或不是 professor，強制回 /login */}
+      {/* 管理員儀表板：如果沒登入，或不是 professor，強制回 / */}
       <Route
         path="/admin/dashboard"
-        element={isAuthenticated && userRole === 'professor' ? <Dashboard /> : <Navigate to="/login" replace />}
+        element={isAuthenticated && userRole === 'professor' ? <Dashboard /> : <Navigate to="/" replace />}
       />
       
-      {/* 管理員庫存頁：如果沒登入，或不是 professor，強制回 /login */}
+      {/* 管理員庫存頁：如果沒登入，或不是 professor，強制回 / */}
       <Route
         path="/admin/inventory"
-        element={isAuthenticated && userRole === 'professor' ? <Inventory /> : <Navigate to="/login" replace />}
+        element={isAuthenticated && userRole === 'professor' ? <Inventory /> : <Navigate to="/" replace />}
       />
 
       {/* 萬用路由：根據登入狀態決定去哪 */}

@@ -79,18 +79,18 @@
 
 ---
 
-## 🛠️ 技術棧與底層魔法
+## 🛠️ 技術棧
 
 ### 前端 (Frontend)
 
-* **核心框架**: React 19 & TypeScript
-* **建構工具**: Vite 8 (搭配 `vite:oxc` 進行極速編譯)
-* **視覺渲染**: Tailwind CSS v4 (幽冥暗黑/霓虹色系)、React Three Fiber & Drei (3D 石牆場景)
-* **路由守衛**: React Router Dom v7
+* **核心框架**: React、TypeScript
+* **建構工具**: Vite
+* **視覺渲染**: Tailwind CSS、React Three Fiber
+* **路由守衛**: React Router Dom
 
 ### 後端 (Backend)
 
-* **執行環境**: Node.js & Express (使用 `tsx` 進行模組監控與自動熱重載)
+* **執行環境**: Node.js & Express
 * **資料庫**: Neon Serverless PostgreSQL
 * **安全防禦**: `bcryptjs` (密碼雜湊加密)、`jsonwebtoken` (JWT 身分通行證簽發)、`cors` (跨域安全防護)
 
@@ -118,7 +118,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 將 `server/db/init.sql` 內部的 SQL 建表語句與種子資料，複製並在 **Neon.tech 的 SQL Editor** 中運行。這會自動建立並填充資料表。
 
 #### 🔐 預設測試帳戶密碼生成說明
-因為後端採用 `bcryptjs` 安全防線，資料庫中絕對不可存入明文密碼。若需在 `init.sql` 內手動新增或修改測試巫師的預設密碼，請先在終端機執行以下 Node.js 指令得到雜湊（Hash）碼，再複製貼入 SQL 語句中：
+因為後端採用 `bcryptjs` 安全防線，資料庫中不可存入明文密碼。若需在 `init.sql` 內手動新增或修改測試巫師的預設密碼，請先在終端機執行以下 Node.js 指令得到雜湊（Hash）碼，再複製貼入 SQL 語句中：
 
 ```bash
 node -e "const b = require('bcryptjs'); b.hash('你的明文密碼', 10).then(h => console.log(h))"
@@ -132,8 +132,8 @@ node -e "const b = require('bcryptjs'); b.hash('你的明文密碼', 10).then(h 
 npm run dev
 ```
 
-* **前端執行節點**: 藍色標籤 `[VITE]` $\rightarrow$ `http://localhost:5173`
-* **後端執行節點**: 綠色標籤 `[EXPR]` $\rightarrow$ `http://localhost:3000`
+* **前端執行節點**: `http://localhost:5173`
+* **後端執行節點**: `http://localhost:3000`
 
 ---
 
@@ -141,13 +141,14 @@ npm run dev
 
 ### 身分模組 (`/api/auth`)
 
-* `GET /api/auth` - 撈取所有黑市使用者 (安全過濾密碼明文)
+* `GET /api/auth` - 取得目前登入使用者資料
+* `GET /api/auth` - 撈取所有黑市使用者
 * `POST /api/auth/register` - 註冊新巫師身分 (自動觸發 `bcrypt` 10代鹽值雜湊加密)
 * `POST /api/auth/login` - 比對加密金鑰，成功後簽發 24 小時時效之 `JWT 通行證`
 
 ### 商品模組 (`/api/magic`)
 
 * `GET /api/magic` - 撈取現存所有商品清單
-* `POST /api/magic` - 新增物資品項 (教授管理員權限)
+* `POST /api/magic` - 新增物資品項 (管理員權限)
 * `PUT /api/magic/:id/stock` - 變更指定商品的管制庫存數量
 * `DELETE /api/magic/:id` - 永久移除指定商品品項
