@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
 
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Menu from './pages/Menu';
 import Brewing from './pages/Brewing';
@@ -29,6 +30,12 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* 首頁，一開始進去的頁面 */}
+      <Route
+        path="/"
+        element={<Home />}
+      />
+
       {/* 登入頁：如果已經登入，直接去 /menu，不用重複登入 */}
       <Route
         path="/login"
