@@ -1,9 +1,11 @@
+export type Roles = 'student' | 'professor'; // 使用者角色類型
+
 export interface Users { // 使用者屬性
   id: string;
   account: string;
   password: string;
   username: string;
-  role: 'student' | 'professor';
+  role: Roles;
 }
 
 export interface LoginCredentials { // 登入表單的帳密

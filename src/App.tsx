@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -14,7 +15,7 @@ function AppRoutes() {
 
   if (auth?.loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-screen bg-background-dark flex items-center justify-center">
         <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -23,6 +24,7 @@ function AppRoutes() {
   const isAuthenticated = !!auth?.user;
   const userRole = auth?.user?.role;
 
+  // 用於萬用路由的分流邏輯
   const getFallbackRedirect = () => {
     if (!isAuthenticated) return "/";
     return userRole === 'professor' ? "/admin/dashboard" : "/menu";
@@ -30,47 +32,60 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* 首頁，一開始進去的頁面 */}
+      {/* 首頁：不需登入 */}
       <Route
         path="/"
         element={<Home />}
       />
 
-      {/* 登入頁：如果已經登入，直接去 /menu 或 /admin/dashboard，不用重複登入 */}
+      {/* 登入頁 (已登入者自動分流，不重複登入) */}
       <Route
         path="/login"
         element={isAuthenticated ? <Navigate to={getFallbackRedirect()} replace /> : <Login />}
       />
 
-      {/* 菜單頁：如果沒登入，強制回 / */}
+      {/* 菜單頁 (學生、教授皆可訪問) */}
       <Route
         path="/menu"
-        element={isAuthenticated ? <Menu /> : <Navigate to="/" replace />}
+        element={
+          <ProtectedRoute allowedRoles={['student', 'professor']}>
+            <Menu />
+          </ProtectedRoute>
+        }
       />
 
-      {/* 釀造頁：如果沒登入，一樣強制回 / */}
+      {/* 釀造追蹤頁 (學生、教授皆可訪問) */}
       <Route
         path="/brewing/:orderId"
-        element={isAuthenticated ? <Brewing /> : <Navigate to="/" replace />}
+        element={
+          <ProtectedRoute allowedRoles={['student', 'professor']}>
+            <Brewing />
+          </ProtectedRoute>
+        }
       />
 
-      {/* 管理員儀表板：如果沒登入，或不是 professor，強制回 / */}
+      {/* 管理員儀表板 (僅限教授) */}
       <Route
         path="/admin/dashboard"
-        element={isAuthenticated && userRole === 'professor' ? <Dashboard /> : <Navigate to="/" replace />}
-      />
-      
-      {/* 管理員庫存頁：如果沒登入，或不是 professor，強制回 / */}
-      <Route
-        path="/admin/inventory"
-        element={isAuthenticated && userRole === 'professor' ? <Inventory /> : <Navigate to="/" replace />}
+        element={
+          <ProtectedRoute allowedRoles={['professor']}>
+            <Dashboard />
+          </ProtectedRoute>
+        }
       />
 
-      {/* 萬用路由：根據登入狀態決定去哪 */}
+      {/* 管理員管制庫存頁 (僅限教授) */}
       <Route
-        path="*"
-        element={<Navigate to={getFallbackRedirect()} replace />}
+        path="/admin/inventory"
+        element={
+          <ProtectedRoute allowedRoles={['professor']}>
+            <Inventory />
+          </ProtectedRoute>
+        }
       />
+
+      {/* 萬用未知路由防禦 */}
+      <Route path="*" element={<Navigate to={getFallbackRedirect()} replace />} />
     </Routes>
   );
 }

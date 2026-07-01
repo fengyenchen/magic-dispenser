@@ -42,38 +42,54 @@
 .
 ├── node_modules/
 ├── public/
-├── server/                # 後端（伺服器端）程式碼目錄
-│   ├── db/                # 資料庫相關腳本目錄
-│   ├── routes/            # 後端 API 路由目錄
-│   ├── .env               # 後端環境變數設定檔
-│   ├── .env.example       # 後端環境變數範本檔
-│   ├── db.ts              # 資料庫連線與設定（基於 @neondatabase/serverless 的連線池）
-│   ├── package.json       # 後端專案專屬的套件配置與指令指令碼
-│   └── server.ts          # 後端應用程式的啟動入口檔案（Express 主程式）
-├── src/                   # 前端（客戶端）原始碼目錄
-│   ├── assets/            # 全域靜態樣式與圖片
-│   ├── components/        # 共享組件
-│   ├── context/           # 全域狀態管理目錄
+├── server/                 # 後端（伺服器端）程式碼目錄
+│   ├── db/                 # 資料庫相關腳本目錄
+│   │   └── init.sql        # 資料庫結構
+│   ├── routes/             # 後端 API 路由目錄
+│   │   ├── authRoutes.ts   # 身分驗證與權限路由
+│   │   └── magicRoutes.ts  # 魔法物資管理路由
+│   ├── .env                # 後端環境變數設定檔
+│   ├── .env.example        # 後端環境變數範本檔
+│   ├── db.ts               # 資料庫連線與設定（基於 @neondatabase/serverless 的連線池）
+│   ├── package.json        # 後端專案專屬的套件配置與指令指令碼
+│   └── server.ts           # 後端應用程式的啟動入口檔案（Express 主程式）
+├── src/                    # 前端（客戶端）原始碼目錄
+│   ├── assets/             # 全域靜態樣式與圖片
+│   ├── components/         # 共享組件
+│   │   ├── ProtectedRoute.tsx # 路由守衛
+│   │   └── Wall.tsx        # 3D 石牆組件
+│   ├── context/            # 全域狀態管理目錄
 │   │   └── AuthContext.tsx # 管理全站登入狀態與使用者資訊
-│   ├── hooks/             # 自定義 React Hooks 目錄
-│   ├── pages/             # 頁面組件目錄
-│   ├── services/          # 前端 API 請求服務目錄
-│   ├── types/             # TypeScript 型別定義目錄
-│   ├── App.tsx            # 前端根組件 (路由調度中心)
-│   ├── index.css          # Tailwind CSS v4 設定檔
-│   └── main.tsx           # React 渲染入口檔案
-├── .env                   # 前端環境變數設定檔
-├── .env.example           # 前端環境變數範本檔
-├── .gitignore             # 排除安全敏感檔案進入版本控制
-├── .oxlintrc.json         # Oxlint 極速程式碼檢查設定
-├── index.html             # 應用程式單頁入口
+│   ├── hooks/              # 自定義 React Hooks 目錄
+│   ├── pages/              # 頁面組件目錄
+│   │   ├── admin/          # 監管教授專屬控制台
+│   │   │   ├── Dashboard.tsx
+│   │   │   └── Inventory.tsx
+│   │   ├── Brewing.tsx     # 大釜煉製/購物車頁面
+│   │   ├── Home.tsx        # 首頁
+│   │   ├── Login.tsx       # 登入頁面
+│   │   └── Menu.tsx        # 物資販賣機主介面
+│   ├── services/           # 前端 API 請求服務目錄
+│   │   ├── authService.ts  # 身分驗證 API 請求
+│   │   └── magicService.ts # 物資管理 API 請求
+│   ├── types/              # TypeScript 型別定義目錄
+│   │   ├── auth.ts
+│   │   └── magic.ts
+│   ├── App.tsx             # 前端根組件 (路由調度中心)
+│   ├── index.css           # Tailwind CSS v4 設定檔
+│   └── main.tsx            # React 渲染入口檔案
+├── .env                    # 前端環境變數設定檔
+├── .env.example            # 前端環境變數範本檔
+├── .gitignore              # 排除安全敏感檔案進入版本控制
+├── .oxlintrc.json
+├── index.html              # 應用程式單頁入口
 ├── package-lock.json
-├── package.json           # 全端環境配置與一鍵雙開腳本
-├── README.md              # 說明文件
+├── package.json            # 全端環境配置與一鍵雙開腳本
+├── README.md               # 說明文件
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
-└── vite.config.ts         # Vite 8 建構核心設定
+└── vite.config.ts
 
 ```
 
@@ -83,16 +99,21 @@
 
 ### 前端 (Frontend)
 
-* **核心框架**: React、TypeScript
-* **建構工具**: Vite
-* **視覺渲染**: Tailwind CSS、React Three Fiber
-* **路由守衛**: React Router Dom
+* **核心框架**: React 19、TypeScript
+* **建構工具**: Vite 8
+* **視覺渲染**: Tailwind CSS v4、React Three Fiber
+* **路由與防禦**: React Router Dom
 
 ### 後端 (Backend)
 
 * **執行環境**: Node.js & Express
-* **資料庫**: Neon Serverless PostgreSQL
-* **安全防禦**: `bcryptjs` (密碼雜湊加密)、`jsonwebtoken` (JWT 身分通行證簽發)、`cors` (跨域安全防護)
+* **資料庫**: Neon Serverless PostgreSQL 雲端資料庫
+* **安全防禦**:
+* `bcryptjs` (密碼 10 代鹽值雜湊加密)
+* `jsonwebtoken` (JWT 身分通行證簽發與校驗)
+* `cors` (跨域安全防護)
+
+
 
 ---
 
@@ -100,11 +121,11 @@
 
 ### 1. 前端配置：`./.env`
 
-參考 `./.env.example` 並配置後端 API 基礎路徑。
+參考 `./.env.example`。
 
 ### 2. 後端配置：`./server/.env`
 
-參考 `./server/.env.example` 並配置資料庫連線字串與安全密鑰。
+參考 `./server/.env.example`。
 
 #### 🔑 如何產生後端安全密鑰 (JWT_SECRET)
 
@@ -115,9 +136,11 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 ### 3. 資料庫初始化 (Neon PostgreSQL)
-將 `server/db/init.sql` 內部的 SQL 建表語句與種子資料，複製並在 **Neon.tech 的 SQL Editor** 中運行。這會自動建立並填充資料表。
+
+將 `server/db/init.sql` 內部的 SQL 建表語句與種子資料，複製並在 **Neon.tech 的 SQL Editor** 中運行。這會自動建立資料表。
 
 #### 🔐 預設測試帳戶密碼生成說明
+
 因為後端採用 `bcryptjs` 安全防線，資料庫中不可存入明文密碼。若需在 `init.sql` 內手動新增或修改測試巫師的預設密碼，請先在終端機執行以下 Node.js 指令得到雜湊（Hash）碼，再複製貼入 SQL 語句中：
 
 ```bash
@@ -126,29 +149,26 @@ node -e "const b = require('bcryptjs'); b.hash('你的明文密碼', 10).then(h 
 
 ### 4. 啟動
 
-專案已配置 `concurrently` 並行執行核心。你不需要開啟兩個終端機視窗，只需要一個指令即可雙開前後端：
+專案已配置 `concurrently` 並行執行核心。不需要開啟兩個終端機視窗，只需要一個指令即可開前後端：
 
 ```bash
 npm run dev
 ```
 
-* **前端執行節點**: `http://localhost:5173`
-* **後端執行節點**: `http://localhost:3000`
-
 ---
 
-## 📡 API
+## 📡 API 接口說明
 
 ### 身分模組 (`/api/auth`)
 
-* `GET /api/auth` - 取得目前登入使用者資料
+* `GET /api/auth/me` - 驗證前端傳入之 JWT 通行證，並撈取目前登入的使用者資料
 * `GET /api/auth` - 撈取所有黑市使用者
 * `POST /api/auth/register` - 註冊新巫師身分 (自動觸發 `bcrypt` 10代鹽值雜湊加密)
 * `POST /api/auth/login` - 比對加密金鑰，成功後簽發 24 小時時效之 `JWT 通行證`
 
 ### 商品模組 (`/api/magic`)
 
-* `GET /api/magic` - 撈取現存所有商品清單
-* `POST /api/magic` - 新增物資品項 (管理員權限)
-* `PUT /api/magic/:id/stock` - 變更指定商品的管制庫存數量
-* `DELETE /api/magic/:id` - 永久移除指定商品品項
+* `GET /api/magic` - 撈取現存所有物資商品清單
+* `POST /api/magic` - 新增全新的魔法物資品項進資料庫中
+* `PUT /api/magic/:id` - 更新指定商品的詳細資訊（包含名稱、價格、描述、庫存與分類）
+* `DELETE /api/magic/:id` - 永久刪除指定的商品品項
