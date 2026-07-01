@@ -11,6 +11,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 import magicRouter from './routes/magicRoutes';
 import authRouter from './routes/authRoutes';
+import cartRouter from './routes/cartRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/magic', magicRouter);
+app.use('/api/cart', cartRouter);
 
 // 全域錯誤處理 middleware
 app.use((err: any, _req: Request, res: Response, _next: any) => {

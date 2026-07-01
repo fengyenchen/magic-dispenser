@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { getMagicItems } from '../services/magicService';
+import { addToCart } from '../services/cartService';
 import type { MagicItem } from '../types/magic';
 
 export default function Menu() {
@@ -11,21 +12,40 @@ export default function Menu() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // 販賣機啟動：實時共鳴 Neon 雲端物資庫存
+    const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
+
+    const fetchItems = async () => {
+        try {
+            setIsLoading(true);
+            const data = await getMagicItems();
+            setItems(data);
+        } catch (err: any) {
+            setError(err.message || '無法取得販賣機物資庫存');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchItems = async () => {
-            try {
-                setIsLoading(true);
-                const data = await getMagicItems();
-                setItems(data);
-            } catch (err: any) {
-                setError(err.message || '無法取得販賣機物資庫存');
-            } finally {
-                setIsLoading(false);
-            }
-        };
         fetchItems();
     }, []);
+
+    const handleAddClick = async (itemId: string, itemName: string) => {
+        if (!user?.id) {
+            alert('無法辨識巫師身分，請重新登入');
+            return;
+        }
+        try {
+            setIsSubmitting(itemId);
+            await addToCart(user.id, itemId);
+            alert(`【${itemName}】已成功投入大釜內部！`);
+            await fetchItems();
+        } catch (err: any) {
+            alert(err.message || '投放失敗');
+        } finally {
+            setIsSubmitting(null);
+        }
+    };
 
     if (error) return <div className="text-red-400 font-serif text-center py-20">{error}</div>;
 
@@ -34,7 +54,7 @@ export default function Menu() {
 
             {/* 登出按鈕 */}
             <div className="max-w-6xl mx-auto flex justify-end items-center mb-6">
-                <button className="cursor-pointer flex flex-row items-center justify-center gap-2 text-primary font-serif text-sm hover:text-primary/70 transition" onClick={() => {auth?.logout()}}>
+                <button className="cursor-pointer flex flex-row items-center justify-center gap-2 text-primary font-serif text-sm hover:text-primary/70 transition" onClick={() => { auth?.logout() }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                     </svg>
@@ -93,10 +113,11 @@ export default function Menu() {
                                     庫存: {item.stock} 單位
                                 </span>
                                 <button
-                                    disabled={item.stock <= 0}
+                                    disabled={item.stock <= 0 || isSubmitting === item.id}
+                                    onClick={() => handleAddClick(item.id, item.name)}
                                     className="font-serif text-xs px-4 py-2 rounded-md bg-secondary/10 text-primary border hover:bg-primary/20 transition disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
                                 >
-                                    投入大釜
+                                    {isSubmitting === item.id ? '正在投放...' : '投入大釜'}
                                 </button>
                             </div>
                         </div>

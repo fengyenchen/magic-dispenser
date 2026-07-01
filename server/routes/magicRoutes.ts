@@ -6,7 +6,7 @@ const router = Router();
 // GET: 取得所有商品
 router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     try {
-        const { rows } = await pool.query('SELECT * FROM magic_items');
+        const { rows } = await pool.query('SELECT * FROM magic_items ORDER BY category, name');
         res.status(200).json({
             status: 'success',
             data: rows
