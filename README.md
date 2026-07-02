@@ -36,29 +36,32 @@
   
 ---
 
-## 📁 專案架構
+## 📁 專案架構 (Project Structure)
 
 ```text
 .
-├── node_modules/
-├── public/
-├── server/                 # 後端（伺服器端）程式碼目錄
+├── dist/                   # 前端打包後的正式環境產物 (Vite build 產出)
+├── node_modules/           # 前端與根目錄專屬套件目錄
+├── public/                 # 前端靜態資源目錄
+├── server/                 # 後端（伺服器端） Express 專案目錄
 │   ├── db/                 # 資料庫相關腳本目錄
-│   │   └── init.sql        # 資料庫結構
+│   │   └── init.sql        # 資料庫結構初始化
 │   ├── routes/             # 後端 API 路由目錄
 │   │   ├── authRoutes.ts   # 身分驗證與權限路由
 │   │   ├── cartRoutes.ts   # 大釜 (購物車) 物資路由
-│   │   └── magicRoutes.ts  # 魔法物資管理路由
+│   │   ├── magicRoutes.ts  # 魔法物資管理路由
 │   │   └── orderRoutes.ts  # 巫師訂單管理路由
 │   ├── .env                # 後端環境變數設定檔
 │   ├── .env.example        # 後端環境變數範本檔
-│   ├── db.ts               # 資料庫連線與設定（基於 @neondatabase/serverless 的連線池）
-│   ├── package.json        # 後端專案專屬的套件配置與指令指令碼
-│   └── server.ts           # 後端應用程式的啟動入口檔案（Express 主程式）
-├── src/                    # 前端（客戶端）原始碼目錄
+│   ├── db.ts               # 資料庫連線與 Pool 設定 (基於 @neondatabase/serverless)
+│   ├── package.json        # 後端專案專屬套件配置與指令
+│   ├── tsconfig.json       # 後端獨立 TypeScript 設定檔 (採用 NodeNext 規範)
+│   ├── vercel.json         # 後端 Vercel Serverless Functions 部署設定
+│   └── server.ts           # 後端應用程式啟動入口 (Express 主程式)
+├── src/                    # 前端（客戶端） React 原始碼目錄
 │   ├── assets/             # 全域靜態樣式與圖片
-│   ├── components/         # 共享組件
-│   │   ├── ProtectedRoute.tsx # 路由守衛
+│   ├── components/         # 共享組件目錄
+│   │   ├── ProtectedRoute.tsx # 路由守衛 (權限驗證)
 │   │   └── Wall.tsx        # 3D 石牆組件
 │   ├── context/            # 全域狀態管理目錄
 │   │   └── AuthContext.tsx # 管理全站登入狀態與使用者資訊
@@ -69,32 +72,31 @@
 │   │   │   └── Inventory.tsx
 │   │   ├── Brewing.tsx     # 大釜煉製 (購物車) 頁面
 │   │   ├── Home.tsx        # 首頁
-│   │   ├── Login.tsx       # 登入頁面
+│   │   ├── Login.tsx       # 登入頁
 │   │   └── Menu.tsx        # 物資販賣機主介面
 │   ├── services/           # 前端 API 請求服務目錄
-│   │   ├── authService.ts  # 身分驗證 API 請求
-│   │   ├── cartService.ts  # 大釜 (購物車) 物資 API 請求
-│   │   └── magicService.ts # 物資管理 API 請求
-│   │   └── orderService.ts # 巫師訂單 API 請求
+│   │   ├── authService.ts  # 身分驗證 API 服務
+│   │   ├── cartService.ts  # 大釜物資 API 服務
+│   │   ├── magicService.ts # 物資管理 API 服務
+│   │   └── orderService.ts # 巫師訂單 API 服務
 │   ├── types/              # TypeScript 型別定義目錄
 │   │   ├── auth.ts
 │   │   └── magic.ts
 │   ├── App.tsx             # 前端根組件 (路由調度中心)
-│   ├── index.css           # Tailwind CSS v4 設定檔
+│   ├── index.css           # Tailwind CSS v4 設定擋
 │   └── main.tsx            # React 渲染入口檔案
-├── .env                    # 前端環境變數設定檔
+├── .env                    # 前端環境變數設定檔 (已列入 gitignore)
 ├── .env.example            # 前端環境變數範本檔
-├── .gitignore              # 排除安全敏感檔案進入版本控制
-├── .oxlintrc.json
-├── index.html              # 應用程式單頁入口
+├── .gitignore              # 排除安全敏感檔案與 node_modules 進入版本控制
+├── .oxlintrc.json          # Oxlint 程式碼檢查設定
+├── index.html              # 應用程式單頁入口 (SPA 入口)
 ├── package-lock.json
-├── package.json            # 全端環境配置與一鍵雙開腳本
+├── package.json            # 全端環境配置、一鍵雙開與打包腳本
 ├── README.md               # 說明文件
-├── tsconfig.app.json
-├── tsconfig.json
-├── tsconfig.node.json
-└── vite.config.ts
-
+├── tsconfig.app.json       # 前端應用程式專屬 TS 設定
+├── tsconfig.json           # 根目錄 TS 整合設定 (已排除後端目錄避免衝突)
+├── tsconfig.node.json      # Vite 工具鏈專屬 TS 設定
+└── vite.config.ts          # Vite 設定檔
 ```
 
 ---
