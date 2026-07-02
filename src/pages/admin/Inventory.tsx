@@ -1,0 +1,1 @@
+export default function Inventory() { return <div className="p-12 text-primary font-serif">物資庫存管理（開發中）</div>; }
