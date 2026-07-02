@@ -49,6 +49,7 @@
 │   │   ├── authRoutes.ts   # 身分驗證與權限路由
 │   │   ├── cartRoutes.ts   # 大釜 (購物車) 物資路由
 │   │   └── magicRoutes.ts  # 魔法物資管理路由
+│   │   └── orderRoutes.ts  # 巫師訂單管理路由
 │   ├── .env                # 後端環境變數設定檔
 │   ├── .env.example        # 後端環境變數範本檔
 │   ├── db.ts               # 資料庫連線與設定（基於 @neondatabase/serverless 的連線池）
@@ -74,6 +75,7 @@
 │   │   ├── authService.ts  # 身分驗證 API 請求
 │   │   ├── cartService.ts  # 大釜 (購物車) 物資 API 請求
 │   │   └── magicService.ts # 物資管理 API 請求
+│   │   └── orderService.ts # 巫師訂單 API 請求
 │   ├── types/              # TypeScript 型別定義目錄
 │   │   ├── auth.ts
 │   │   └── magic.ts
@@ -114,8 +116,6 @@
 * `bcryptjs` (密碼 10 代鹽值雜湊加密)
 * `jsonwebtoken` (JWT 身分通行證簽發與校驗)
 * `cors` (跨域安全防護)
-
-
 
 ---
 
@@ -181,3 +181,9 @@ npm run dev
 * `POST /api/cart` - 將指定的魔法物資品項投入大釜中 (新增至購物車)
 * `PUT /api/cart/adjust` - 調整大釜內指定物資的數量
 * `DELETE /api/cart/:cartId` - 將指定的魔法物資徹底從大釜中撈出並移除
+
+### 訂單模組 (`/api/order`)
+
+* `GET /api/order` - 撈取現存的所有訂單清單
+* `GET /api/order/:userId` - 撈取指定巫師的所有歷史訂單紀錄
+* `POST /api/order` - 將指定巫師的大釜（購物車）物資打包結帳，封存為一筆新訂單，並自動清空該巫師的購物車

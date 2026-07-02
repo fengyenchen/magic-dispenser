@@ -7,7 +7,7 @@ const router = Router();
 router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     try {
         const { rows } = await pool.query('SELECT * FROM magic_items ORDER BY category, name');
-        res.status(200).json({
+        return res.status(200).json({
             status: 'success',
             data: rows
         });
@@ -34,7 +34,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             [name, price, description, stock || 0, category]
         );
 
-        res.status(201).json({
+        return res.status(201).json({
             status: 'success',
             data: rows[0]
         });
@@ -67,7 +67,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
             return res.status(404).json({ status: 'error', message: '商品不存在' });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             status: 'success',
             data: rows[0]
         });
@@ -87,7 +87,7 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
             return res.status(404).json({ status: 'error', message: '商品不存在' });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             status: 'success',
             message: '商品已刪除'
         });

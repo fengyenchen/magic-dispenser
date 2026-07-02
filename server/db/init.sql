@@ -31,6 +31,6 @@ CREATE TABLE IF NOT EXISTS orders (
     user_id UUID NOT NULL REFERENCES users(id),
     cart_items JSONB NOT NULL,
     total_price INT NOT NULL,
-    status VARCHAR(50) NOT NULL CHECK (status IN ('brewing', 'completed', 'failed')),
+    status VARCHAR(50) NOT NULL CHECK (status IN ('brewing', 'completed', 'failed')) DEFAULT 'brewing',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

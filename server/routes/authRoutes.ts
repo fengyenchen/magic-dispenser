@@ -34,7 +34,7 @@ const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
     });
 };
 
-router.get('/me', authenticate, async (req: any, res: Response) => {
+router.get('/me', authenticate, async (req: any, res: Response, next: NextFunction) => {
     try {
         const userId = req.user.id;
 
@@ -43,12 +43,12 @@ router.get('/me', authenticate, async (req: any, res: Response) => {
             [userId]
         );
 
-        res.status(200).json({
+        return res.status(200).json({
             status: 'success',
             user: rows[0]
         });
     } catch (err) {
-        res.status(500).json({ status: 'error', message: '伺服器錯誤' });
+        next(err);
     }
 });
 
@@ -56,7 +56,7 @@ router.get('/me', authenticate, async (req: any, res: Response) => {
 router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     try {
         const { rows } = await pool.query('SELECT id, account, username, role FROM users');
-        res.status(200).json({
+        return res.status(200).json({
             status: 'success',
             data: rows
         });
@@ -98,7 +98,7 @@ router.post('/register', async (req: Request, res: Response, next: NextFunction)
             [account, hashedPassword, username, finalRole]
         );
 
-        res.status(201).json({
+        return res.status(201).json({
             status: 'success',
             message: '註冊成功！',
             data: rows[0]
@@ -140,7 +140,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
             { expiresIn: '24h' }
         );
 
-        res.status(200).json({
+        return res.status(200).json({
             status: 'success',
             message: '登入成功',
             token,

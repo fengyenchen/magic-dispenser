@@ -4,6 +4,7 @@ import { getMagicItems } from '../services/magicService';
 import { addToCart, getCartItems, adjustCartQuantity, removeFromCart } from '../services/cartService';
 import type { MagicItem } from '../types/magic';
 import { useNavigate } from 'react-router-dom';
+import { createOrder } from '../services/orderService';
 
 export default function Menu() {
     const navigate = useNavigate();
@@ -113,6 +114,20 @@ export default function Menu() {
     };
 
     const totalPrice = cartItems.reduce((sum, item) => sum + ((item?.price || 0) * (item?.quantity || 0)), 0);
+
+    const handleCreateOrder = async () => {
+        if (!user?.id) {
+            alert('無法辨識巫師身分，請重新登入');
+            return;
+        }
+        try {
+            const order = await createOrder(user.id, totalPrice);
+            setIsCartOpen(false);
+            navigate(`/brewing/${order.id}`);
+        } catch (err: any) {
+            alert(err.message || '建立訂單失敗');
+        }
+    };
 
     if (error) return <div className="text-red-400 font-serif text-center py-20">{error}</div>;
 
@@ -266,14 +281,14 @@ export default function Menu() {
                         {/* 總計 */}
                         <div className="border-t border-secondary/20 pt-4 mt-6">
                             <div className="flex justify-between items-center mb-6 font-serif">
-                                <span className="text-sm text-primary/70">預計消耗總能量:</span>
+                                <span className="text-sm text-primary/70">預計總消耗:</span>
                                 <span className="text-lg font-bold text-primary tracking-wide">{totalPrice} 阿卡幣</span>
                             </div>
 
                             <button
                                 disabled={cartItems.length === 0}
                                 className="w-full py-3 bg-secondary/10 hover:bg-primary/20 border border-primary/40 rounded text-primary font-serif tracking-widest text-sm font-bold transition disabled:opacity-10 disabled:cursor-not-allowed cursor-pointer"
-                                onClick={() => navigate('/brewing')}
+                                onClick={() => handleCreateOrder()}
                             >
                                 開始釀造
                             </button>
