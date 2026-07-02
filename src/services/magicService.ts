@@ -13,6 +13,17 @@ export const getMagicItems = async (): Promise<MagicItem[]> => {
     return data.data;
 };
 
+// 取得單一商品
+export const getMagicItem = async (id: string): Promise<MagicItem> => {
+    const response = await fetch(`${API_BASE_URL}/api/magic/${id}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || '無法取得該商品');
+    return data.data;
+};
+
 // 新增商品
 export const createMagicItem = async (item: Omit<MagicItem, 'id'>): Promise<MagicItem> => {
     const response = await fetch(`${API_BASE_URL}/api/magic`, {

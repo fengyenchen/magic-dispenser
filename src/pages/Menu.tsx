@@ -240,7 +240,7 @@ export default function Menu() {
                         ) : cartItems.length === 0 ? (
                             <div className="text-center font-serif text-xs text-primary/40 py-20 italic">大釜目前空無一物，尚未投入原料</div>
                         ) : (
-                            <div className="flex flex-col gap-4 py-4 overflow-y-auto pr-2">
+                            <div className="flex flex-col gap-4 py-4 overflow-y-auto pr-2 h-full">
                                 {cartItems.map((cItem) => (
                                     <div key={cItem.cart_item_id} className="border border-secondary/20 rounded p-4 flex justify-between items-center">
                                         <div className="flex flex-row items-center gap-4">

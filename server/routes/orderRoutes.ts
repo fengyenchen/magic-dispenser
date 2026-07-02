@@ -18,7 +18,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // GET: 取得使用者的所有訂單
-router.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/user/:userId', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId } = req.params;
 
@@ -74,5 +74,33 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
         next(err);
     }
 });
+
+// GET: 取得某訂單裡的所有物資資訊
+router.get('/detail/:orderId', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { orderId } = req.params;
+
+        if (!orderId) {
+            return res.status(400).json({ status: 'error', message: '缺少訂單ID' });
+        }
+    
+        const { rows } = await pool.query(
+            'SELECT cart_items FROM orders WHERE id = $1',
+            [orderId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ status: 'error', message: '找不到該筆訂單' });
+        }
+
+        return res.status(200).json({
+            status: 'success',
+            data: rows[0]
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
 
 export default router;

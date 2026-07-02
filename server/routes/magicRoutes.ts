@@ -16,6 +16,21 @@ router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     }
 });
 
+// GET: 取得單一商品
+router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const { rows } = await pool.query('SELECT * FROM magic_items WHERE id = $1', [id]);
+
+        return res.status(200).json({
+            status: 'success',
+            data: rows[0]
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
 // POST: 新增商品
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {

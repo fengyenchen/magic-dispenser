@@ -67,7 +67,7 @@
 │   │   ├── admin/          # 監管教授專屬控制台
 │   │   │   ├── Dashboard.tsx
 │   │   │   └── Inventory.tsx
-│   │   ├── Brewing.tsx     # 大釜煉製/購物車頁面
+│   │   ├── Brewing.tsx     # 大釜煉製 (購物車) 頁面
 │   │   ├── Home.tsx        # 首頁
 │   │   ├── Login.tsx       # 登入頁面
 │   │   └── Menu.tsx        # 物資販賣機主介面
@@ -171,6 +171,7 @@ npm run dev
 ### 商品模組 (`/api/magic`)
 
 * `GET /api/magic` - 撈取現存所有物資商品清單
+* `GET /api/magic/:id` - 取得指定商品的詳細資訊
 * `POST /api/magic` - 新增全新的魔法物資品項進資料庫中
 * `PUT /api/magic/:id` - 更新指定商品的詳細資訊（包含名稱、價格、描述、庫存與分類）
 * `DELETE /api/magic/:id` - 永久刪除指定的商品品項
@@ -185,5 +186,6 @@ npm run dev
 ### 訂單模組 (`/api/order`)
 
 * `GET /api/order` - 撈取現存的所有訂單清單
-* `GET /api/order/:userId` - 撈取指定巫師的所有歷史訂單紀錄
+* `GET /api/order/user/:userId` - 撈取指定巫師的所有歷史訂單紀錄
+* `GET /api/order/detail/:orderId` - 取得特定訂單內的所有物資詳細資訊
 * `POST /api/order` - 將指定巫師的大釜（購物車）物資打包結帳，封存為一筆新訂單，並自動清空該巫師的購物車
