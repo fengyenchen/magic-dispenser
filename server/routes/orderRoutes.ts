@@ -4,7 +4,7 @@ import pool from '../db.js';
 const router = Router();
 
 // GET: 取得所有訂單
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     try {
         const { rows } = await pool.query('SELECT * FROM orders ORDER BY created_at DESC');
 
@@ -85,7 +85,7 @@ router.get('/detail/:orderId', async (req: Request, res: Response, next: NextFun
         }
     
         const { rows } = await pool.query(
-            'SELECT cart_items FROM orders WHERE id = $1',
+            'SELECT * FROM orders WHERE id = $1',
             [orderId]
         );
 
@@ -102,5 +102,28 @@ router.get('/detail/:orderId', async (req: Request, res: Response, next: NextFun
     }
 });
 
+// PUT: 更新訂單狀態
+router.put('/status/:orderId', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { orderId } = req.params;
+        const { status } = req.body;
+
+        if (!orderId || !status) {
+            return res.status(400).json({ status: 'error', message: '缺少必要參數' });
+        }
+
+        const { rows } = await pool.query(
+            'UPDATE orders SET status = $1 WHERE id = $2 RETURNING *',
+            [status, orderId]
+        );
+
+        return res.status(200).json({
+            status: 'success',
+            data: rows[0]
+        });
+    } catch (err) {
+        next(err);
+    }
+});
 
 export default router;

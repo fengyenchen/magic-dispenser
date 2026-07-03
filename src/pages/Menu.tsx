@@ -132,7 +132,7 @@ export default function Menu() {
     if (error) return <div className="text-red-400 font-serif text-center py-20">{error}</div>;
 
     return (
-        <div className="bg-background-dark text-primary px-6 py-12">
+        <div className="relative bg-background-dark text-primary px-6 py-8 md:py-12">
 
             {/* 登出按鈕 */}
             <div className="max-w-6xl mx-auto flex justify-end items-center mb-6">
@@ -163,7 +163,7 @@ export default function Menu() {
 
             {/* 販賣機商品區 */}
             {isLoading ? (
-                <div className="text-primary font-serif text-center py-20 animate-pulse">
+                <div className="w-full min-h-100 flex justify-center items-center text-primary font-serif animate-pulse">
                     正在共鳴黑市販賣機物資...
                 </div>
             ) : (

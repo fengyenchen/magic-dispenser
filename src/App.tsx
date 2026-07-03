@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Menu from './pages/Menu';
 import Brewing from './pages/Brewing';
+import Admin from './pages/admin/Admin';
 import Dashboard from './pages/admin/Dashboard';
 import Inventory from './pages/admin/Inventory';
 
@@ -64,25 +65,19 @@ function AppRoutes() {
         }
       />
 
-      {/* 管理員儀表板 (僅限教授) */}
       <Route
-        path="/admin/dashboard"
+        path="/admin"
         element={
           <ProtectedRoute allowedRoles={['professor']}>
-            <Dashboard />
+            <Admin />
           </ProtectedRoute>
         }
-      />
-
-      {/* 管理員管制庫存頁 (僅限教授) */}
-      <Route
-        path="/admin/inventory"
-        element={
-          <ProtectedRoute allowedRoles={['professor']}>
-            <Inventory />
-          </ProtectedRoute>
-        }
-      />
+      >
+        {/* 子路由會自己塞進 Admin 元件內部的 <Outlet /> 區塊 */}
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="inventory" element={<Inventory />} />
+        <Route path="" element={<Navigate to="dashboard" replace />} />
+      </Route>
 
       {/* 萬用未知路由防禦 */}
       <Route path="*" element={<Navigate to={getFallbackRedirect()} replace />} />
@@ -90,7 +85,7 @@ function AppRoutes() {
   );
 }
 
-function App() {
+export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -99,5 +94,3 @@ function App() {
     </AuthProvider>
   );
 }
-
-export default App;

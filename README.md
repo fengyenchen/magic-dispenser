@@ -4,6 +4,21 @@
 
 ---
 
+### 通用帳密
+
+
+**拾荒巫師**
+
+* 帳號：valentine@neonmail.net 
+* 密碼：student123
+
+**監管教授**
+
+* 帳號：kronos@overlord.com
+* 密碼：professor456
+
+---
+
 ## 🌃 故事背景：【新亞特蘭提斯 — 霓虹交界處】
 
 > *「在機械矩陣的霓虹交界處，Order（秩序）是一條死去的代碼，而 Inspiration（靈感）則藏在廢棄的碎片裡。」*
@@ -68,8 +83,8 @@
 │   ├── hooks/              # 自定義 React Hooks 目錄
 │   ├── pages/              # 頁面組件目錄
 │   │   ├── admin/          # 監管教授專屬控制台
-│   │   │   ├── Dashboard.tsx
-│   │   │   └── Inventory.tsx
+│   │   │   ├── Dashboard.tsx # 儀表板頁面
+│   │   │   └── Inventory.tsx # 庫存頁面
 │   │   ├── Brewing.tsx     # 大釜煉製 (購物車) 頁面
 │   │   ├── Home.tsx        # 首頁
 │   │   ├── Login.tsx       # 登入頁
@@ -191,3 +206,4 @@ npm run dev
 * `GET /api/order/user/:userId` - 撈取指定巫師的所有歷史訂單紀錄
 * `GET /api/order/detail/:orderId` - 取得特定訂單內的所有物資詳細資訊
 * `POST /api/order` - 將指定巫師的大釜（購物車）物資打包結帳，封存為一筆新訂單，並自動清空該巫師的購物車
+* `PUT /api/status/:orderId` - 更新特定訂單的狀態

@@ -47,8 +47,10 @@ export const AuthProvider = ({ children }: { children: any }) => {
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('token');
+    if (window.confirm('確定登出？')) {
+      setUser(null)
+      localStorage.removeItem('token')
+    }
   };
 
   return (
