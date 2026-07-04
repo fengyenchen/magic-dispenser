@@ -78,7 +78,8 @@ export default function Inventory() {
         fetchMagicItems();
     }, []);
 
-    if (error) return <div className="text-red-400 font-serif text-center py-20">{error}</div>;
+    if (isLoading) return <div className="h-screen bg-background-dark text-primary font-serif flex items-center justify-center animate-pulse">正在加載庫存資料...</div>;
+    if (error) return <div className="h-screen bg-background-dark text-red-400 font-serif flex items-center justify-center">{error}</div>;
 
     return (
         <main className="w-full min-h-screen bg-background p-6 lg:p-10">
@@ -90,6 +91,7 @@ export default function Inventory() {
                 <div className="w-full flex justify-between lg:hidden">
                     <div className="flex gap-2">
                         <button onClick={() => navigate('/admin/dashboard')} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">訂單</button>
+                        <button onClick={() => navigate('/admin/history')} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">歷史</button>
                         <button onClick={() => navigate('/menu')} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">學生端</button>
                     </div>
                     <div className="flex gap-2">

@@ -64,7 +64,7 @@ export default function Dashboard() {
     const brewingOrders = orders.filter(order => order.status === 'brewing');
     const pastOrders = orders.filter(order => order.status === 'completed' || order.status === 'failed');
 
-    if (isLoading) return <div className="h-screen bg-background-dark text-primary font-serif flex items-center justify-center animate-pulse">正在加載阿卡那特權協議...</div>;
+    if (isLoading) return <div className="h-screen bg-background-dark text-primary font-serif flex items-center justify-center animate-pulse">正在加載訂單資料...</div>;
     if (error) return <div className="h-screen bg-background-dark text-red-400 font-serif flex items-center justify-center">{error}</div>;
 
     return (
@@ -77,6 +77,7 @@ export default function Dashboard() {
                 <div className="w-full flex justify-between lg:hidden">
                     <div className="flex gap-2">
                         <button onClick={() => navigate('/admin/inventory')} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">庫存</button>
+                        <button onClick={() => navigate('/admin/history')} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">歷史</button>
                         <button onClick={() => navigate('/menu')} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">學生端</button>
                     </div>
                     <div className="flex gap-2">
