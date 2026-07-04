@@ -10,6 +10,7 @@ import Brewing from './pages/Brewing';
 import Admin from './pages/admin/Admin';
 import Dashboard from './pages/admin/Dashboard';
 import Inventory from './pages/admin/Inventory';
+import History from './pages/admin/History';
 
 function AppRoutes() {
   const auth = useContext(AuthContext);
@@ -76,6 +77,7 @@ function AppRoutes() {
         {/* 子路由會自己塞進 Admin 元件內部的 <Outlet /> 區塊 */}
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="inventory" element={<Inventory />} />
+        <Route path="history" element={<History />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </Route>
 

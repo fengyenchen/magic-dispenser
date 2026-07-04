@@ -1,0 +1,1 @@
+export default function History() { return <div className="p-12 text-primary font-serif">歷史資料分析（開發中）</div>; }
