@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllOrders, updateOrderStatus, getOrder } from '../../services/orderService';
-import { parseDatabaseDate } from '../../lib/utils';
 import LogoutDialog from '../../components/LogoutDialog';
 
 export default function Dashboard() {
@@ -21,8 +20,8 @@ export default function Dashboard() {
             const data = await getAllOrders();
             const localizedData = data.map((order: any) => ({
                 ...order,
-                created_at: parseDatabaseDate(order.created_at) 
-            }))
+                created_at: new Date(order.created_at)
+            }));
 
             setOrders(localizedData);
         } catch (err: any) {

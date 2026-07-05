@@ -7,7 +7,6 @@ import { isWithinInterval } from "date-fns"
 import { type DateRange } from "react-day-picker"
 import { Calendar } from "../../components/ui/calendar"
 import type { Order } from '../../types/magic';
-import { parseDatabaseDate } from '../../lib/utils';
 import LogoutDialog from '../../components/LogoutDialog';
 
 interface SalesItem {
@@ -48,7 +47,7 @@ export default function History() {
             today.setHours(0, 0, 0, 0);
 
             const todaysOrders = data.filter((order) => {
-                const orderDate = parseDatabaseDate(order.created_at);
+                const orderDate = new Date(order.created_at);
                 return orderDate.getDate() === today.getDate();
             });
 
@@ -115,7 +114,7 @@ export default function History() {
         endDate.setHours(23, 59, 59, 999);
 
         const filteredOrders = allOrders.filter((order) => {
-            const orderDate = parseDatabaseDate(order.created_at);
+            const orderDate = new Date(order.created_at);
             return isWithinInterval(orderDate, { start: startDate, end: endDate });
         });
 
