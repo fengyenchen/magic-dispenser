@@ -2,6 +2,18 @@ import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "../../components/ui/alert-dialog"
+
 export default function Admin() {
     const navigate = useNavigate();
     const location = useLocation(); // 取得當前位置資訊
@@ -78,12 +90,35 @@ export default function Admin() {
                         REFRESH
                     </button>
                     {/* 登出按鈕 */}
-                    <button
-                        onClick={() => auth?.logout()}
-                        className="w-full py-2 border border-primary/30 rounded text-xs bg-secondary/10 hover:bg-primary/20 transition tracking-widest font-mono cursor-pointer"
-                    >
-                        LOGOUT
-                    </button>
+                    <AlertDialog>
+                        <AlertDialogTrigger>
+                            <button
+                                className="w-full py-2 border border-primary/30 rounded text-xs bg-secondary/10 hover:bg-primary/20 transition tracking-widest font-mono cursor-pointer"
+                            >
+                                LOGOUT
+                            </button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>確定要登出嗎？</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    登出後需要重新登入，請確認是否要登出。
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>
+                                    取消
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={() => auth?.logout()}
+                                >
+                                    確定
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
                 </div>
             </aside>
 

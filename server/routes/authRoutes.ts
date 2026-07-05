@@ -13,7 +13,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key_arcana';
 // 擴充 Express Request 型別，讓後面的 authenticate 中間件可以在 req 上用 user 屬性
 interface AuthRequest extends Request {
     user?: {
-        id: string;
+        id: string,
+        role?: string
     };
 }
 
@@ -29,7 +30,7 @@ const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
         if (err) {
             return res.status(403).json({ status: 'error', message: '憑證無效或已過期' });
         }
-        req.user = { id: decoded.id };  // 將解密後的使用者 ID 存到 req.user
+        req.user = { id: decoded.id, role: decoded.role };  // 將解密後的使用者 ID 和角色存到 req.user
         next(); // 放行
     });
 };

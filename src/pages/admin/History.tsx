@@ -1,48 +1,67 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
 import { getAllOrders } from '../../services/orderService';
 import { getMagicItem } from '../../services/magicService';
+import * as React from "react"
+import { isWithinInterval } from "date-fns"
+import { type DateRange } from "react-day-picker"
+import { Calendar } from "../../components/ui/calendar"
+import type { Order } from '../../types/magic';
+import { parseDatabaseDate } from '../../lib/utils';
+import LogoutDialog from '../../components/LogoutDialog';
+
+interface SalesItem {
+    id: string;
+    name: string;
+    quantity: number;
+    price: number;
+    category: string;
+}
 
 export default function History() {
-    const auth = useContext(AuthContext);
     const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [allOrders, setAllOrders] = useState<Order[]>([]);
+
     const [todayRevenue, setTodayRevenue] = useState<number>(0);
     const [todayOrderCount, setTodayOrderCount] = useState<number>(0);
-    const [todaySalesList, setTodaySalesList] = useState<Array<{
-        id: string;
-        name: string;
-        quantity: number;
-        price: number;
-        category: string;
-    }>>([]);
+    const [todaySalesList, setTodaySalesList] = useState<SalesItem[]>([]);
+
+    const [dateRange, setDateRange] = React.useState<DateRange | undefined>(() => {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        return {
+            from: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30),
+            to: now
+        };
+    });
 
     const fetchOrders = async () => {
         try {
             setIsLoading(true);
-            const data = await getAllOrders();
+            const data: Order[] = await getAllOrders();
+            setAllOrders(data);
 
-            const today = new Date().toDateString();
-            const todaysOrders = data.filter((order: any) => {
-                const orderDate = new Date(order.created_at);
-                return orderDate.toDateString() === today;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const todaysOrders = data.filter((order) => {
+                const orderDate = parseDatabaseDate(order.created_at);
+                return orderDate.getDate() === today.getDate();
             });
 
-            const revenue = todaysOrders.reduce((total: number, order: any) => total + (order.total_price || 0), 0);
+            const revenue = todaysOrders.reduce((total, order) => total + (order.total_price || 0), 0);
             setTodayRevenue(revenue);
 
-            const todayOrderCount = todaysOrders.length;
-            setTodayOrderCount(todayOrderCount);
+            setTodayOrderCount(todaysOrders.length);
 
             // item_id => quantity
             const todayItems: { [key: string]: number } = {};
-            todaysOrders.forEach((order: any) => {
-                let items = order.cart_items;
-                items.forEach((item: any) => {
+            todaysOrders.forEach((order) => {
+                let items = order.cart_items || [];
+                items.forEach((item) => {
                     const qty = Number(item.quantity) || 0;
                     todayItems[item.magic_item_id] = (todayItems[item.magic_item_id] || 0) + qty;
                 });
@@ -85,6 +104,29 @@ export default function History() {
         }
     };
 
+    const pastStats = useMemo(() => {
+        if (!dateRange?.from || !dateRange?.to) {
+            return { revenue: 0, count: 0 };
+        }
+
+        const startDate = new Date(dateRange.from);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(dateRange.to);
+        endDate.setHours(23, 59, 59, 999);
+
+        const filteredOrders = allOrders.filter((order) => {
+            const orderDate = parseDatabaseDate(order.created_at);
+            return isWithinInterval(orderDate, { start: startDate, end: endDate });
+        });
+
+        const revenue = filteredOrders.reduce((total, order) => total + (order.total_price || 0), 0);
+
+        return {
+            revenue,
+            count: filteredOrders.length
+        };
+    }, [allOrders, dateRange]);
+
     useEffect(() => {
         fetchOrders();
     }, []);
@@ -107,13 +149,15 @@ export default function History() {
                     </div>
                     <div className="flex gap-2">
                         <button onClick={fetchOrders} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">刷新</button>
-                        <button onClick={auth?.logout} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">登出</button>
+                        <LogoutDialog trigger={
+                            <button className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">登出</button>
+                        } />
                     </div>
                 </div>
             </div>
 
             {/* 內容 */}
-            <div className="w-full flex mt-6 mb-4">
+            <div className="w-full flex flex-col mt-6 mb-4">
 
                 {/* 今日 */}
                 <div className="w-full mb-6">
@@ -124,20 +168,20 @@ export default function History() {
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-4">
                         {/* 總營收 */}
-                        <div className="row-span-1 col-span-1 font-serif bg-background-dark border border-secondary/30 rounded p-6 flex flex-col">
+                        <div className="lg:row-span-1 lg:col-span-1 font-serif bg-background-dark border border-secondary/30 rounded p-6 flex flex-col">
                             <h2 className="text-lg font-bold text-white/90 border-b border-secondary/20 pb-2 mb-2">總營收</h2>
                             <p className="text-2xl font-bold flex justify-between items-center">{todayRevenue}<span className="text-lg text-primary/70">AC</span></p>
                         </div>
 
                         {/* 商品銷量排行 */}
-                        <div className="row-span-2 col-span-2 font-serif bg-background-dark border border-secondary/30 rounded p-6 flex flex-col">
+                        <div className="lg:row-span-2 lg:col-span-2 font-serif bg-background-dark border border-secondary/30 rounded p-6 flex flex-col">
                             <h2 className="text-lg font-bold text-white/90 border-b border-secondary/20 pb-2">商品銷量排行</h2>
                             <div className="flex flex-col max-h-52 overflow-y-auto pr-1">
                                 {todaySalesList.length === 0 ? (
-                                    <p className="text-primary/80 text-sm">尚無銷售紀錄</p>
+                                    <p className="text-primary/80 text-sm pt-3">尚無銷售紀錄</p>
                                 ) : (
                                     todaySalesList.map((item, index) => (
-                                        <div key={index} className="flex justify-between text-sm border-b border-secondary/20 items-center hover:bg-secondary/10 transition px-2 py-3 rounded">
+                                        <div key={item.id} className="flex justify-between text-sm border-b border-secondary/20 items-center hover:bg-secondary/10 transition px-2 py-3 rounded">
                                             <div className="flex justify-start gap-4 items-center">
                                                 <p className="truncate text-primary/80">
                                                     {index + 1}. {item.name}
@@ -156,9 +200,45 @@ export default function History() {
                         </div>
 
                         {/* 總單數 */}
-                        <div className="row-span-1 col-span-1 font-serif bg-background-dark border border-secondary/30 rounded p-6 flex flex-col">
+                        <div className="lg:row-span-1 lg:col-span-1 font-serif bg-background-dark border border-secondary/30 rounded p-6 flex flex-col">
                             <h2 className="text-lg font-bold text-white/90 border-b border-secondary/20 pb-2 mb-2">總單數</h2>
                             <p className="text-2xl font-bold flex justify-between items-center">{todayOrderCount}<span className="text-lg text-primary/70">單</span></p>
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* 日曆 */}
+                <div className="w-full mb-6">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold text-primary/80">過去</h2>
+                        <span className="text-xs font-mono tracking-widest bg-secondary/10 border border-secondary/30 px-2 py-0.5 text-primary/80 rounded-full">
+                            from {dateRange?.from?.toLocaleDateString() || '未選擇'} to {dateRange?.to?.toLocaleDateString() || '未選擇'}
+                        </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-4">
+                        <div className="w-full h-full lg:col-span-1 lg:row-span-2 flex justify-center lg:justify-start">
+                            <Calendar
+                                mode="range"
+                                defaultMonth={dateRange?.from}
+                                selected={dateRange}
+                                onSelect={setDateRange}
+                                numberOfMonths={2}
+                                className="rounded-lg border border-secondary/30"
+                            />
+                        </div>
+
+                        {/* 總營收 */}
+                        <div className="lg:row-span-1 lg:col-span-1 font-serif bg-background-dark border border-secondary/30 rounded p-6 flex flex-col">
+                            <h2 className="text-lg font-bold text-white/90 border-b border-secondary/20 pb-2 mb-2">總營收</h2>
+                            <p className="text-2xl font-bold flex justify-between items-center">{pastStats.revenue}<span className="text-lg text-primary/70">AC</span></p>
+                        </div>
+
+                        {/* 總單數 */}
+                        <div className="lg:row-span-1 lg:col-span-1 font-serif bg-background-dark border border-secondary/30 rounded p-6 flex flex-col">
+                            <h2 className="text-lg font-bold text-white/90 border-b border-secondary/20 pb-2 mb-2">總單數</h2>
+                            <p className="text-2xl font-bold flex justify-between items-center">{pastStats.count}<span className="text-lg text-primary/70">單</span></p>
                         </div>
 
                     </div>

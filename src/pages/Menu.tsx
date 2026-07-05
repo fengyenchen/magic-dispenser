@@ -5,6 +5,7 @@ import { addToCart, getCartItems, adjustCartQuantity, removeFromCart } from '../
 import type { MagicItem } from '../types/magic';
 import { useNavigate } from 'react-router-dom';
 import { createOrder } from '../services/orderService';
+import LogoutDialog from '../components/LogoutDialog';
 
 export default function Menu() {
     const navigate = useNavigate();
@@ -134,13 +135,46 @@ export default function Menu() {
     return (
         <div className="relative bg-background-dark text-primary px-6 py-8 md:py-12">
 
-            {/* 登出按鈕 */}
-            <div className="max-w-6xl mx-auto flex justify-end items-center mb-6">
-                <button className="cursor-pointer flex flex-row items-center justify-center gap-2 text-primary font-serif text-sm hover:text-primary/70 transition" onClick={() => { auth?.logout() }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                    </svg>
-                </button>
+            <div className={`max-w-6xl mx-auto flex ${user?.role === 'professor' ? 'justify-between' : 'justify-end'} items-center mb-6`}>
+                {/* 回 dashboard 按鈕 */}
+                {user?.role === 'professor' && (
+                    <div className="relative group">
+                        <button
+                            className="cursor-pointer flex flex-row items-center justify-center gap-2 text-primary font-serif text-sm hover:text-primary/70 transition"
+                            onClick={() => { navigate('/dashboard') }}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+                            </svg>
+                        </button>
+
+                        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 hidden group-hover:flex items-center z-20">
+                            <div className="w-0 h-0 border-y-4 border-y-transparent border-r-4 border-r-primary/30" />
+                            <div className="bg-background border border-primary/30 text-primary text-[11px] font-serif px-2 py-1 rounded whitespace-nowrap tracking-wider">
+                                回到管理室
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* 登出按鈕 */}
+                    <LogoutDialog trigger={
+                        <div className="relative group">
+                            <button className="cursor-pointer flex flex-row items-center justify-center gap-2 text-primary font-serif text-sm hover:text-primary/70 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                                </svg>
+                            </button>
+
+                            <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 hidden group-hover:flex items-center z-20">
+                                <div className="bg-background border border-primary/30 text-primary text-[11px] font-serif px-2 py-1 rounded whitespace-nowrap tracking-wider">
+                                    登出
+                                </div>
+                                <div className="w-0 h-0 border-y-4 border-y-transparent border-l-4 border-l-primary/30" />
+                            </div>
+                        </div>
+                    } />
+
             </div>
 
             {/* 頂部標題 */}

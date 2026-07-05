@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { getMagicItems, updateMagicItem, createMagicItem, deleteMagicItem } from '../../services/magicService';
 import type { MagicItem } from '../../types/magic';
+import LogoutDialog from '../../components/LogoutDialog';
 
 export default function Inventory() {
     const auth = useContext(AuthContext);
@@ -96,7 +97,9 @@ export default function Inventory() {
                     </div>
                     <div className="flex gap-2">
                         <button onClick={fetchMagicItems} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">刷新</button>
-                        <button onClick={auth?.logout} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">登出</button>
+                        <LogoutDialog trigger={
+                            <button className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">登出</button>
+                        } />
                     </div>
                 </div>
             </div>

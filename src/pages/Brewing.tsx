@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Wall from '../components/Wall';
 import Loader from '../components/Loader';
@@ -32,9 +32,7 @@ export default function Brewing() {
         fetchOrderList();
     }, []);
 
-    const totalPrice = useMemo(() => {
-        return orderList.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    }, [orderList]);
+    const totalPrice =  orderList.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     return (
         <div className="relative w-screen h-screen overflow-hidden flex items-center justify-center bg-background-dark">
@@ -65,21 +63,21 @@ export default function Brewing() {
                 </div>
 
                 <div className="flex flex-col items-center justify-center py-4">
-                    <ul className="text-sm text-primary/70 w-full px-4">
-                        <li className="overflow-y-auto max-h-48">
+                    <div className="text-sm text-primary/70 w-full px-4">
+                        <ul className="overflow-y-auto max-h-48">
                             {orderList.map((item) => (
                                 <li className="mb-2 flex justify-between items-center" key={item.cart_item_id}>
                                     <span>{item.magic_item_name} × {item.quantity}</span>
                                     <span className="font-bold">{item.quantity * item.price}</span>
                                 </li>
                             ))}
-                        </li>
+                        </ul>
 
-                        <li className="border-b border-secondary/70 my-4"></li>
-                        <li className="flex justify-end items-center">
+                        <div className="border-b border-secondary/70 my-4"></div>
+                        <div className="flex justify-end items-center">
                             共 <span className="font-bold mx-1"> {totalPrice} </span> 阿卡幣
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="border-t border-secondary/10 pt-4">

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllOrders, updateOrderStatus, getOrder } from '../../services/orderService';
-import { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { parseDatabaseDate } from '../../lib/utils';
+import LogoutDialog from '../../components/LogoutDialog';
 
 export default function Dashboard() {
-    const auth = useContext(AuthContext);
     const navigate = useNavigate();
 
     const [orders, setOrders] = useState<any[]>([]);
@@ -20,7 +19,12 @@ export default function Dashboard() {
         try {
             setIsLoading(true);
             const data = await getAllOrders();
-            setOrders(data);
+            const localizedData = data.map((order: any) => ({
+                ...order,
+                created_at: parseDatabaseDate(order.created_at) 
+            }))
+
+            setOrders(localizedData);
         } catch (err: any) {
             setError(err.message || '無法取得訂單資料');
         } finally {
@@ -82,7 +86,9 @@ export default function Dashboard() {
                     </div>
                     <div className="flex gap-2">
                         <button onClick={fetchOrders} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">刷新</button>
-                        <button onClick={auth?.logout} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">登出</button>
+                        <LogoutDialog trigger={
+                            <button className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">登出</button>
+                        } />
                     </div>
                 </div>
             </div>
@@ -115,7 +121,7 @@ export default function Dashboard() {
                                     >
                                         <div className="flex flex-col items-start gap-0.5">
                                             <div className="text-white/70 font-bold truncate">{order.id}</div>
-                                            <div className="text-[10px] text-primary/50 mt-1 font-serif">消耗 <span className="text-primary font-bold mx-1">{order.total_price} AC</span> · {new Date(order.created_at).toLocaleString('zh-TW')}</div>
+                                            <div className="text-[10px] text-primary/50 mt-1 font-serif">消耗 <span className="text-primary font-bold mx-1">{order.total_price} AC</span> · {order.created_at.toLocaleString('zh-TW')}</div>
                                         </div>
                                         <div className="flex gap-1.5" onClick={e => e.stopPropagation()}>
                                             <button
@@ -167,7 +173,7 @@ export default function Dashboard() {
                                     >
                                         <div className="flex flex-col items-start gap-0.5">
                                             <div className="text-primary/70 truncate">{order.id}</div>
-                                            <div className="text-[10px] text-primary/40 mt-0.5 font-serif">消耗 <span className="text-primary font-bold px-1">{order.total_price} AC</span> · {new Date(order.created_at).toLocaleString()}</div>
+                                            <div className="text-[10px] text-primary/40 mt-0.5 font-serif">消耗 <span className="text-primary font-bold px-1">{order.total_price} AC</span> · {order.created_at.toLocaleString()}</div>
                                         </div>
                                         <div className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-widest border ${order.status === 'completed' ? 'bg-green-500/5 text-green-400/80 border-green-500/20' : 'bg-red-500/5 text-red-400/80 border-red-500/20'}`}>
                                             {order.status}
@@ -221,7 +227,7 @@ export default function Dashboard() {
                             <div className="border-t border-secondary/10 pt-4 font-serif text-xs flex flex-col gap-2">
                                 <div className="flex justify-between items-center">
                                     <span className="text-primary/60">時間</span>
-                                    <span className="font-mono text-[11px] text-primary/80">{new Date(selectedOrder.created_at).toLocaleString()}</span>
+                                    <span className="font-mono text-[11px] text-primary/80">{selectedOrder.created_at.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center border-t border-secondary/5 pt-2">
                                     <span className="text-primary/60">總計</span>

@@ -6,14 +6,11 @@
 
 ### 通用帳密
 
-
 **拾荒巫師**
-
 * 帳號：valentine@neonmail.net 
 * 密碼：student123
 
 **監管教授**
-
 * 帳號：kronos@overlord.com
 * 密碼：professor456
 
@@ -40,7 +37,7 @@
 * **命運軌跡：** 
   手握黑市發放的加密通行證簽到進場，在販賣機幽暗的螢幕前瀏覽被禁絕的魔藥與法術。當他們把物資拋入大釜、啟動引導時，必須在漫天魔力煙霧中屏息等待，直到霓虹代碼煉製完成，炸開獲得物資的特效。
 * **生存法則：** 
-  絕對不要試圖窺探看守者的辦公室，或妄想修改商品的代價。
+  絕對不要試圖窺探看守者（監管教授）的辦公室，或妄想修改商品的代價。
 
 ### 👑 監管教授 (Overlord Professors) ── 守序者【克羅諾斯 Kronos】
 人稱「黑醫」的執法官，黑市的幕後看守人與物資壟斷者。負責將高危險性的「過載奈米神經毒素」與「暗影潛行代碼插件」上架至販賣機中，一邊維持著黑市的運作，一邊暗中觀察著那些試圖翻轉矩陣的年輕巫師。
@@ -76,15 +73,25 @@
 ├── src/                    # 前端（客戶端） React 原始碼目錄
 │   ├── assets/             # 全域靜態樣式與圖片
 │   ├── components/         # 共享組件目錄
+│   │   ├── ui/             # 底層基礎 UI 組件 (Shadcn/ui)
+│   │   │   ├── alert-dialog.tsx # 彈出式警告對話框
+│   │   │   ├── button.tsx       # 按鈕組件
+│   │   │   └── calendar.tsx     # 日曆選取組件
+│   │   ├── Loader.tsx      # 讀取中動畫組件
+│   │   ├── LogoutDialog.tsx # 登出確認對話框
 │   │   ├── ProtectedRoute.tsx # 路由守衛 (權限驗證)
 │   │   └── Wall.tsx        # 3D 石牆組件
 │   ├── context/            # 全域狀態管理目錄
 │   │   └── AuthContext.tsx # 管理全站登入狀態與使用者資訊
 │   ├── hooks/              # 自定義 React Hooks 目錄
+│   ├── lib/                # 工具函式庫目錄
+│   │   └── utils.ts        # 全域共用工具函式 (如 clsx/tailwind-merge 類名整合)
 │   ├── pages/              # 頁面組件目錄
 │   │   ├── admin/          # 監管教授專屬控制台
-│   │   │   ├── Dashboard.tsx # 儀表板頁面
-│   │   │   └── Inventory.tsx # 庫存頁面
+│   │   │   ├── Admin.tsx       # 監管教授主控頁面入口
+│   │   │   ├── Dashboard.tsx   # 儀表板頁面
+│   │   │   ├── History.tsx     # 歷史操作/點交紀錄頁面
+│   │   │   └── Inventory.tsx   # 庫存管理頁面
 │   │   ├── Brewing.tsx     # 大釜煉製 (購物車) 頁面
 │   │   ├── Home.tsx        # 首頁
 │   │   ├── Login.tsx       # 登入頁
@@ -116,23 +123,28 @@
 
 ---
 
-## 🛠️ 技術棧
+## 🛠️ 技術棧 (Tech Stack)
 
 ### 前端 (Frontend)
 
-* **核心框架**: React 19、TypeScript
-* **建構工具**: Vite 8
-* **視覺渲染**: Tailwind CSS v4、React Three Fiber
-* **路由與防禦**: React Router Dom
+* **核心框架**: React、TypeScript
+* **建構工具**: Vite
+* **視覺與動畫**: Tailwind CSS、React Three Fiber
+* **路由調度**: React Router Dom
 
 ### 後端 (Backend)
 
-* **執行環境**: Node.js & Express
-* **資料庫**: Neon Serverless PostgreSQL 雲端資料庫
+* **執行環境**: Node.js、Express
+* **語言規範**: TypeScript (採用 NodeNext 模組解析規範)
 * **安全防禦**:
-* `bcryptjs` (密碼 10 代鹽值雜湊加密)
-* `jsonwebtoken` (JWT 身分通行證簽發與校驗)
-* `cors` (跨域安全防護)
+  * `bcryptjs` (密碼 10 代鹽值雜湊加密)
+  * `jsonwebtoken` (JWT 身分通行證簽發與校驗)
+  * `cors` (跨域安全防護)
+
+### 資料庫 (Database)
+
+* **雲端資料庫**: Neon Serverless PostgreSQL
+* **連線工具**: `@neondatabase/serverless`
 
 ---
 
@@ -166,7 +178,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 node -e "const b = require('bcryptjs'); b.hash('你的明文密碼', 10).then(h => console.log(h))"
 ```
 
-### 4. 啟動
+### 4. 啟動項目
 
 專案已配置 `concurrently` 並行執行核心。不需要開啟兩個終端機視窗，只需要一個指令即可開前後端：
 
