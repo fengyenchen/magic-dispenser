@@ -14,15 +14,19 @@ export default function Inventory() {
     const [isChanging, setIsChanging] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const fetchMagicItems = async () => {
+    const fetchMagicItems = async (isBackground: boolean = false) => {
         try {
-            setIsLoading(true);
+            if (!isBackground) {
+                setIsLoading(true);
+            }
             const data = await getMagicItems();
             setMagicItems(data);
         } catch (err: any) {
             setError(err.message || '無法取得魔法商品資料');
         } finally {
-            setIsLoading(false);
+            if (!isBackground) {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -50,7 +54,7 @@ export default function Inventory() {
                     category: editingItem.category
                 });
             }
-            await fetchMagicItems();
+            await fetchMagicItems(true);
             setEditingItem(null);
         } catch (err: any) {
             setError(err.message || '更新失敗');
@@ -63,7 +67,7 @@ export default function Inventory() {
         try {
             setIsDeleting(true);
             await deleteMagicItem(id);
-            await fetchMagicItems();
+            await fetchMagicItems(true);
             setEditingItem(null);
         } catch (err: any) {
             setError(err.message || '刪除失敗');
@@ -73,7 +77,14 @@ export default function Inventory() {
     };
 
     useEffect(() => {
-        fetchMagicItems();
+        fetchMagicItems(false);
+
+        // 每 5 秒刷新一次庫存資料
+        const timer = setInterval(() => {
+            fetchMagicItems(true);
+        }, 5000);
+
+        return () => clearInterval(timer);
     }, []);
 
     if (isLoading) return <div className="h-screen bg-background-dark text-primary font-serif flex items-center justify-center animate-pulse">正在加載庫存資料...</div>;
@@ -93,7 +104,7 @@ export default function Inventory() {
                         <button onClick={() => navigate('/menu')} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">學生端</button>
                     </div>
                     <div className="flex gap-2">
-                        <button onClick={fetchMagicItems} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">刷新</button>
+                        <button onClick={() => fetchMagicItems(false)} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">刷新</button>
                         <LogoutDialog trigger={
                             <button className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">登出</button>
                         } />

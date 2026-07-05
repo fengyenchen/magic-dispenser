@@ -129,7 +129,7 @@
 
 * **核心框架**: React、TypeScript
 * **建構工具**: Vite
-* **視覺與動畫**: Tailwind CSS、React Three Fiber
+* **視覺與動畫**: Tailwind CSS、React Three Fiber、shadcn/ui (Base UI)
 * **路由調度**: React Router Dom
 
 ### 後端 (Backend)

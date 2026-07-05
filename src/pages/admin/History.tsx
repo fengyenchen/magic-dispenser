@@ -37,9 +37,11 @@ export default function History() {
         };
     });
 
-    const fetchOrders = async () => {
+    const fetchOrders = async (isBackground: boolean = false) => {
         try {
-            setIsLoading(true);
+            if (!isBackground) {
+                setIsLoading(true);
+            }
             const data: Order[] = await getAllOrders();
             setAllOrders(data);
 
@@ -99,7 +101,9 @@ export default function History() {
         } catch (err: any) {
             setError(err.message || '無法取得歷史資料');
         } finally {
-            setIsLoading(false);
+            if (!isBackground) {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -127,7 +131,14 @@ export default function History() {
     }, [allOrders, dateRange]);
 
     useEffect(() => {
-        fetchOrders();
+        fetchOrders(false);
+
+        // 每 5 秒刷新一次訂單資料
+        const timer = setInterval(() => {
+            fetchOrders(true);
+        }, 5000);
+
+        return () => clearInterval(timer);
     }, []);
 
     if (isLoading) return <div className="h-screen bg-background-dark text-primary font-serif flex items-center justify-center animate-pulse">正在加載歷史資料...</div>;
@@ -147,7 +158,7 @@ export default function History() {
                         <button onClick={() => navigate('/menu')} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">學生端</button>
                     </div>
                     <div className="flex gap-2">
-                        <button onClick={fetchOrders} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">刷新</button>
+                        <button onClick={() => fetchOrders(false)} className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">刷新</button>
                         <LogoutDialog trigger={
                             <button className="text-[10px] border border-primary/20 px-2 py-1 rounded bg-secondary/10">登出</button>
                         } />
@@ -208,7 +219,7 @@ export default function History() {
                 </div>
 
                 {/* 日曆 */}
-                <div className="w-full mb-6">
+                <div className="w-full">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold text-primary/80">過去</h2>
                         <span className="text-xs font-mono tracking-widest bg-secondary/10 border border-secondary/30 px-2 py-0.5 text-primary/80 rounded-full">
