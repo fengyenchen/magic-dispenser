@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
 import { getMagicItems, updateMagicItem, createMagicItem, deleteMagicItem } from '../../services/magicService';
 import type { MagicItem } from '../../types/magic';
 import LogoutDialog from '../../components/LogoutDialog';
 
 export default function Inventory() {
-    const auth = useContext(AuthContext);
     const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
