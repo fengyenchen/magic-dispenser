@@ -18,9 +18,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-    // 如果是 production，就綁定前端的 Vercel 正式網址；否則（本地端）就直接給 true 允許連線
+    // 如果是 production，就綁定前端的正式網址；否則（本地端）就直接給 true 允許連線
     origin: process.env.NODE_ENV === 'production'
-        ? 'https://fengyenchen-magic-dispenser.vercel.app'
+        ? process.env.FRONTEND_ORIGIN
         : true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
